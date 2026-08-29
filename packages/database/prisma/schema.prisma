@@ -6,7 +6,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum OAuthProvider {
+  GOOGLE 
+}
+
 model User {
   id    String @id @default(uuid())
+  name String?
   email String @unique
+  avatarUrl String?
+  providerId String
+  provider OAuthProvider
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
