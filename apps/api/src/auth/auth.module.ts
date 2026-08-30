@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import type { StringValue } from 'ms';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import type { StringValue } from 'ms';
         expiresIn: process.env.JWT_EXPIRES_IN! as StringValue,
       },
     }),
+    UsersModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

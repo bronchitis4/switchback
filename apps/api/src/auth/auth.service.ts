@@ -1,13 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { oauthConfig, OAuthProvider } from './configs/oauth.config';
+import { oauthConfig } from './configs/oauth.config';
 import { ProviderCallbackQueryDto } from './dto/provider-callback-query.dto';
 import { NormalizedOAuthProfile } from './interfaces/auth.interfaces';
 import { OAuthErrors } from './constants/auth-error.constants';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { OAuthProvider } from '@switchback/database';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   getAuthUrl(provider: OAuthProvider) {
     const config = oauthConfig[provider];
@@ -63,17 +68,27 @@ export class AuthService {
       throw new BadRequestException(error);
     }
 
-    const userData = await this.handleOAuthCallback(provider, code);
+    const { id, name, email, avatarUrl } = await this.handleOAuthCallback(
+      provider,
+      code,
+    );
 
     //TODO: Create-get user
+    const user = await this.userService.getUserForLogin({
+      name,
+      email,
+      avatarUrl,
+      providerId: id,
+      provider,
+    });
 
     const access_token = await this.jwtService.signAsync({
-      sub: userData?.id,
-      email: userData?.email,
+      sub: user?.id,
+      email: user?.email,
     });
 
     return {
-      userData,
+      user: { name, email, avatarUrl },
       access_token,
     };
   }

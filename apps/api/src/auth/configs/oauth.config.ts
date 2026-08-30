@@ -1,6 +1,4 @@
-export enum OAuthProvider {
-  GOOGLE = 'google',
-}
+import { OAuthProvider } from '@switchback/database';
 
 export const oauthConfig = {
   [OAuthProvider.GOOGLE]: {

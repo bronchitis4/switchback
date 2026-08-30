@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
-import { OAuthProvider } from './configs/oauth.config';
 import { ProviderCallbackQueryDto } from './dto/provider-callback-query.dto';
+import { OAuthProvider } from '@switchback/database';
 
 @Controller('auth')
 export class AuthController {
